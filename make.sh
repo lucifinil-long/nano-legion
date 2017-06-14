@@ -11,17 +11,21 @@ fi
 
 CURDIR=`pwd`
 export GOROOT=$GOROOT
-export GOPATH=$CURDIR/../../../
-echo $GOPATH
+cd $CURDIR/../../../../
+export GOPATH=`pwd`
+echo go path: $GOPATH
+cd -
 
-svnurl=`git config -l| grep remote.origin.url |awk -F "=" '{print $2}'`
-svnver=`git rev-parse HEAD`
+# git information
+gitUrl=`git config -l| grep remote.origin.url |awk -F "=" '{print $2}'`
+gitHead=`git rev-parse HEAD`
 author=`git config -l| grep user.email |awk -F "=" '{print $2}'`
+branch=`git branch |grep "*" |awk -F " " '{print $2}'`
 date=`date "+%Y-%m-%d_%H:%M:%S"`
 
 #goversion=`$GOROOT/bin/go version`
 
-ldflags="-X model._SVN_=$svnurl -X model._BASE_VERSION_=$svnver -X model._AUTHOR_=$author -X model._COMPILE_TIME_=\"$date\""
+ldflags="-X model._GIT_=$gitUrl -X model._BRANCH_=$branch -X model._BASE_COMMIT_=$gitHead -X model._AUTHOR_=$author -X model._COMPILE_TIME_=\"$date\""
 echo ldflags $ldflags
 
 echo "formating code..."
@@ -31,7 +35,7 @@ $GOROOT/bin/gofmt -w ./
 goimports -w=true ./
 
 echo "build tools"
-$GOROOT/bin/go build -o ../../bin/tools/protoc-gen-go lucifinil-long/nano-legion/vendor/github.com/golang/protobuf/protoc-gen-go
+$GOROOT/bin/go install github.com/lucifinil-long/nano-legion/vendor/github.com/golang/protobuf/protoc-gen-go
 
 echo "building administrative center and agent..."
 
