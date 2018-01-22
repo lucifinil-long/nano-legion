@@ -14,14 +14,17 @@ import (
 )
 
 const (
+	// DATEFORMAT is the date format
 	DATEFORMAT = "2006-01-02"
+	// HOURFORMAT is the date and hour format
 	HOURFORMAT = "2006010215"
 )
 
 var logLevel = [4]string{"debug", "trace", "warn", "error"}
 
+// Logger is logger struct
 /*
- * 默认日志文件级别包括debug/trace/warn/error
+ * 	默认日志文件级别包括debug/trace/warn/error
  */
 type Logger struct {
 	logMap     map[string]*LoggerInfo
@@ -30,6 +33,7 @@ type Logger struct {
 	sync.RWMutex
 }
 
+// LoggerInfo is logger info struct
 type LoggerInfo struct {
 	filename       string
 	bufferInfoLock sync.RWMutex
@@ -43,21 +47,27 @@ type LoggerInfo struct {
 }
 
 const (
-	_        = iota
+	_ = iota
+	// KB is 1024 Bytes
 	KB int64 = 1 << (iota * 10)
+	// MB is 1024 KB
 	MB
+	// GB is 1024 MB
 	GB
+	// TB is 1024 GB
 	TB
 	maxFileSize       = 2 * GB
 	maxFileCount      = 10
 	defaultBufferSize = 2 * KB
 )
 
+// LoggerBuffer is logger buffer struct
 type LoggerBuffer struct {
 	bufferLock    sync.RWMutex
 	bufferContent *bytes.Buffer
 }
 
+// NewLogger creates new logger object
 /*
  * 创建一个新的日志记录对象
  * 创建新日志对象的同时，也会启动日志写入协程
